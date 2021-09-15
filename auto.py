@@ -18,21 +18,28 @@ screenWidth, screenHeight = pyautogui.size()
 
 currentMouseX, currentMouseY = pyautogui.position()
 
-description = """Each piece features a sample of the official source code of Ethereum.
-Generative Art by pifragile.
-"""
 
-def list_nft(name, file_name):
+
+def paste_text(text):
+	pyperclip.copy(text)
+	time.sleep(0.1)
+	pyautogui.keyDown('command')
+	pyautogui.press('v')
+	pyautogui.keyUp('command')
+
+def list_nft(name, file_name, description, collection_link):
 	print(f'adding file {filename}')
 	wait_for_image('add.png')
+	time.sleep(0.05)
 	print('add..')
 	# add item
-
-	# change window
 	pyautogui.click(1594, 239)
+	time.sleep(0.2)
 
-	pyautogui.click(1594, 239)
-	time.sleep(0.05)
+	if not wait_for_image('create.png', num_tries=2):
+		# click again
+		time.sleep(0.5)
+		pyautogui.click(1594, 239)
 
 	wait_for_image('create.png')
 	print('create..')
@@ -52,8 +59,11 @@ def list_nft(name, file_name):
 	pyautogui.click(1292, 115)
 
 	time.sleep(0.5)
-	for c in file_name:
-		pyautogui.write(c)
+
+	paste_text(file_name)
+	time.sleep(0.5)
+	pyautogui.press('enter')
+
 
 	time.sleep(0.5)
 	# not macOS
@@ -70,13 +80,11 @@ def list_nft(name, file_name):
 	print('selected file')
 	wait_for_image('change.png')
 
-	# name
 	time.sleep(0.5)
 	pyautogui.click(595, 873)
 	time.sleep(0.5)
-
-	pyautogui.write(name)
-	time.sleep(0.05)
+	paste_text(name)
+	time.sleep(0.2)
 
 	# description
 	pyautogui.scroll(-20)
@@ -84,7 +92,7 @@ def list_nft(name, file_name):
 	pyautogui.click(705, 452)
 	time.sleep(0.5)
 
-	pyautogui.write(description)
+	paste_text(description)
 	time.sleep(0.05)
 
 	pyautogui.scroll(-17)
@@ -111,7 +119,7 @@ def list_nft(name, file_name):
 	wait_for_image('amount.png')
 	pyautogui.click(923, 529)
 	time.sleep(0.5)
-	pyautogui.write('0.01')
+	paste_text('0.01')
 
 	time.sleep(0.3)
 
@@ -156,37 +164,70 @@ def list_nft(name, file_name):
 	pyautogui.click(1155, 266)
 	time.sleep(0.5)
 	#back
+	# while not wait_for_image('header.png', num_tries=1):
+	# 	pyautogui.click(407, 84)
+	# 	time.sleep(0.1)
+	# 	for c in 'https://opensea.io/collection/crypto-source':
+	# 		pyautogui.typewrite(c)
+	# 	time.sleep(0.1)
+	# 	pyautogui.press('enter')
+	# 	time.sleep(1)
 	pyautogui.click(407, 84)
-	time.sleep(0.05)
-	pyautogui.write('https://opensea.io/collection/crypto-source')
-	time.sleep(0.05)
+	time.sleep(0.1)
+	paste_text(collection_link)
+	time.sleep(0.1)
 	pyautogui.press('enter')
-	time.sleep(0.05)
+	time.sleep(0.5)
 
 	return url
 
 i = 0
-for filename in os.listdir('/Users/pigu/Dropbox/DATA/Documents/projekte/nft/drue/vier/collection'):
+# change window
+pyautogui.click(1594, 239)
 
-	if not filename.split('.')[-1] == 'gif':
-		continue
-
-	with open('processed_files.txt', 'r') as processed_files:
-		if filename in processed_files.read().splitlines():
-			print(f'Skipping file {filename}')
-			continue	
-
+def nft_name_fun_csc(filename):
 	name_parts = filename.split('.')[0].split('_')
 	name_parts[-1] = str(int(name_parts[-1]) + 1)
 	name_parts = [s.capitalize() for s in name_parts]
 	name = ' '.join(name_parts)
+	return name
 
-	nft_url = list_nft(name, filename)
+def nft_name_fun_cfd(filename):
+	nft_number = filename.split('.')[0]
+	return f'Colorful Distortion #{nft_number}'
 
-	with open('nfts.csv', 'a') as nft_file:
+filename_list = os.listdir('/Users/pigu/Dropbox/DATA/Documents/projekte/nft/drue/vier/collection')
+series_name = 'csc'
+nft_name_fun = nft_name_fun_csc
+description = """Each piece features a sample of the official source code of Ethereum.
+Generative Art by pifragile.
+"""
+collection_link = 'https://opensea.io/collection/crypto-source'
+
+filename_list = [f'{i:04d}.gif' for i in range(16, 128)]
+series_name = 'cfd'
+description = "Generative Art by pifragile."
+nft_name_fun = nft_name_fun_cfd
+collection_link = 'https://opensea.io/collection/colorful-distortion'
+
+for filename in filename_list:
+
+	if not filename.split('.')[-1] == 'gif':
+		continue
+
+	with open(f'processed_files_{series_name}.txt', 'r') as processed_files:
+		if filename in processed_files.read().splitlines():
+			print(f'Skipping file {filename}')
+			continue	
+
+	name = nft_name_fun(filename)
+
+	nft_url = list_nft(name, filename, description, collection_link)
+
+	with open(f'nfts_{series_name}.csv', 'a') as nft_file:
 		nft_file.write(f'{filename},{name},{nft_url}\n')
 
-	with open('processed_files.txt', 'a') as processed_files:
+	with open(f'processed_files_{series_name}.txt', 'a') as processed_files:
 		processed_files.write(f'{filename}\n')
 	i+=1
 	if i > 100:
