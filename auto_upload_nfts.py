@@ -159,6 +159,8 @@ def list_nft(name, file_name, description, collection_link):
 	time.sleep(.5)
 	url = pyperclip.paste()
 
+	if not url.startswith('https'):
+		raise Exception('BAD URL.')
 
 	#close
 	pyautogui.click(1155, 266)
