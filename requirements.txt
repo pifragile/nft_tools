@@ -1,0 +1,5 @@
+dropbox==11.19.0
+pip-chill==1.0.1
+pyautogui==0.9.53
+python-dotenv==0.19.0
+python-twitter==3.5
