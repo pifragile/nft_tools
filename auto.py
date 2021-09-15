@@ -29,31 +29,31 @@ def paste_text(text):
 
 def list_nft(name, file_name, description, collection_link):
 	print(f'adding file {filename}')
-	wait_for_image('add.png')
+	wait_for_image(os.path.join('images', 'add.png'))
 	time.sleep(0.05)
 	print('add..')
 	# add item
 	pyautogui.click(1594, 239)
 	time.sleep(0.2)
 
-	if not wait_for_image('create.png', num_tries=2):
+	if not wait_for_image(os.path.join('images', 'create.png'), num_tries=2):
 		# click again
 		time.sleep(0.5)
 		pyautogui.click(1594, 239)
 
-	wait_for_image('create.png')
+	wait_for_image(os.path.join('images', 'create.png'))
 	print('create..')
 	# choose image
 	pyautogui.click(637, 587)
 
 	time.sleep(0.5)
 
-	if not wait_for_image('collection.png', num_tries=2):
+	if not wait_for_image(os.path.join('images', 'collection.png'), num_tries=2):
 		# click again
 		time.sleep(0.5)
 		pyautogui.click(637, 587)
 
-	wait_for_image('collection.png')
+	wait_for_image(os.path.join('images', 'collection.png'))
 
 	# search field
 	pyautogui.click(1292, 115)
@@ -78,7 +78,7 @@ def list_nft(name, file_name, description, collection_link):
 	pyautogui.click(1515, 608)
 
 	print('selected file')
-	wait_for_image('change.png')
+	wait_for_image(os.path.join('images', 'change.png'))
 
 	time.sleep(0.5)
 	pyautogui.click(595, 873)
@@ -103,7 +103,7 @@ def list_nft(name, file_name, description, collection_link):
 	time.sleep(0.05)
 
 
-	wait_for_image('woot.png')
+	wait_for_image(os.path.join('images', 'woot.png'))
 	print('ADDED')
 	#close popup
 	pyautogui.click(1078, 263)
@@ -128,7 +128,7 @@ def list_nft(name, file_name, description, collection_link):
 	time.sleep(0.05)
 
 	#sign
-	wait_for_image('signature.png', num_tries=6)
+	wait_for_image(os.path.join('images', 'signature.png'), num_tries=6)
 	print('sign..')
 
 	pyautogui.click(1579, 588)
@@ -136,20 +136,20 @@ def list_nft(name, file_name, description, collection_link):
 
 	time.sleep(1)
 	# handle when wallet crashes
-	if wait_for_image('amount.png', num_tries=1):
+	if wait_for_image(os.path.join('images', 'amount.png'), num_tries=1):
 		# post listing
 		pyautogui.click(1163,613)
 		time.sleep(0.05)
 
 		#sign
 		print('sign..')
-		wait_for_image('signature.png')
+		wait_for_image(os.path.join('images', 'signature.png'))
 		pyautogui.click(1579, 588)
 		time.sleep(0.05)
 		
 	#view
 	print('LISTED')
-	wait_for_image('listed.png')
+	wait_for_image(os.path.join('images', 'listed.png'))
 	print('copy url and return...')
 
 
@@ -164,14 +164,6 @@ def list_nft(name, file_name, description, collection_link):
 	pyautogui.click(1155, 266)
 	time.sleep(0.5)
 	#back
-	# while not wait_for_image('header.png', num_tries=1):
-	# 	pyautogui.click(407, 84)
-	# 	time.sleep(0.1)
-	# 	for c in 'https://opensea.io/collection/crypto-source':
-	# 		pyautogui.typewrite(c)
-	# 	time.sleep(0.1)
-	# 	pyautogui.press('enter')
-	# 	time.sleep(1)
 	pyautogui.click(407, 84)
 	time.sleep(0.1)
 	paste_text(collection_link)
@@ -224,7 +216,7 @@ for filename in filename_list:
 
 	nft_url = list_nft(name, filename, description, collection_link)
 
-	with open(f'nfts_{series_name}.csv', 'a') as nft_file:
+	with open(os.path.join('nft_data', f'nfts_{series_name}.csv'), 'a') as nft_file:
 		nft_file.write(f'{filename},{name},{nft_url}\n')
 
 	with open(f'processed_files_{series_name}.txt', 'a') as processed_files:
