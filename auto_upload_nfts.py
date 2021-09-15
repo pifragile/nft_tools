@@ -116,7 +116,7 @@ def list_nft(name, file_name, description, collection_link):
 	print('sell..')
 
 	# price
-	wait_for_image('amount.png')
+	wait_for_image(os.path.join('images', 'amount.png'))
 	pyautogui.click(923, 529)
 	time.sleep(0.5)
 	paste_text('0.01')
