@@ -43,6 +43,17 @@ Check it out on @opensea:
 
 #NFT #NFTCommunity #opensea #nftcollector #nftart'''
 
+def get_post_text_hca(name, opensea_link):
+	return f'''{name}
+Generative Art by pifragile.
+
+1 NFT = 5 color patterns with proof of uniqueness
+
+Check it out on @opensea:
+{opensea_link}
+
+#NFT #NFTCommunity #opensea #nftcollector #nftart'''
+
 def post_nft(series_name):
 	shared_nfts_file = f'shared_nfts_{series_name}.txt'
 	if not os.path.exists(shared_nfts_file):
@@ -81,12 +92,12 @@ def post_nft(series_name):
 		f.write(f'{filename}\n')
 
 
-series_names = ['cfd', 'csc']
+series_names = ['cfd', 'csc', 'hca']
 
 while True:
 	try:
 		post_nft(random.choice(series_names))
-		time.sleep(random.randint(1 * 3600, 4 * 3600))
+		time.sleep(random.randint(int(0.75 * 3600), 3 * 3600))
 	except Exception as e:
 		print(e)
 		time.sleep(60)

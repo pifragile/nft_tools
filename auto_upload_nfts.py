@@ -12,7 +12,7 @@ def wait_for_image(image, num_tries=None):
 		if i > num_tries:
 			return False
 	time.sleep(1)
-	return True
+	return loc
 
 screenWidth, screenHeight = pyautogui.size()
 
@@ -27,7 +27,7 @@ def paste_text(text):
 	pyautogui.press('v')
 	pyautogui.keyUp('command')
 
-def list_nft(name, file_name, description, collection_link):
+def list_nft(name, filename, description, collection_link):
 	print(f'adding file {filename}')
 	wait_for_image(os.path.join('images', 'add.png'))
 	time.sleep(0.05)
@@ -60,7 +60,7 @@ def list_nft(name, file_name, description, collection_link):
 
 	time.sleep(0.5)
 
-	paste_text(file_name)
+	paste_text(filename)
 	time.sleep(0.5)
 	pyautogui.press('enter')
 
@@ -88,12 +88,12 @@ def list_nft(name, file_name, description, collection_link):
 
 	# description
 	pyautogui.scroll(-20)
-	time.sleep(0.05)
+	time.sleep(0.2)
 	pyautogui.click(705, 452)
 	time.sleep(0.5)
 
 	paste_text(description)
-	time.sleep(0.05)
+	time.sleep(0.2)
 
 	pyautogui.scroll(-17)
 	time.sleep(0.05)
@@ -175,10 +175,6 @@ def list_nft(name, file_name, description, collection_link):
 
 	return url
 
-i = 0
-# change window
-pyautogui.click(1594, 239)
-
 def nft_name_fun_csc(filename):
 	name_parts = filename.split('.')[0].split('_')
 	name_parts[-1] = str(int(name_parts[-1]) + 1)
@@ -189,6 +185,10 @@ def nft_name_fun_csc(filename):
 def nft_name_fun_cfd(filename):
 	nft_number = filename.split('.')[0]
 	return f'Colorful Distortion #{nft_number}'
+
+def nft_name_fun_hca(filename):
+	nft_number = filename.split('.')[0]
+	return f'Hashed Chaos #{nft_number}'
 
 filename_list = os.listdir('/Users/pigu/Dropbox/DATA/Documents/projekte/nft/drue/vier/collection')
 series_name = 'csc'
@@ -204,6 +204,19 @@ description = "Generative Art by pifragile."
 nft_name_fun = nft_name_fun_cfd
 collection_link = 'https://opensea.io/collection/colorful-distortion'
 
+
+filename_list = [f'{i:04d}.gif' for i in range(9, 201)]
+series_name = 'hca'
+description = """Each piece consists of 5 randomized color patterns, where every second frame displays the hexadecimal SHA-256 hash digest of the previous frame as a proof of uniqueness.
+
+Generative Art by pifragile."""
+nft_name_fun = nft_name_fun_hca
+collection_link = 'https://opensea.io/collection/hashed-chaos'
+
+
+i = 0
+# change window
+pyautogui.click(1594, 239)
 for filename in filename_list:
 
 	if not filename.split('.')[-1] == 'gif':
@@ -212,7 +225,7 @@ for filename in filename_list:
 	with open(f'processed_files_{series_name}.txt', 'r') as processed_files:
 		if filename in processed_files.read().splitlines():
 			print(f'Skipping file {filename}')
-			continue	
+			continue
 
 	name = nft_name_fun(filename)
 
@@ -224,5 +237,5 @@ for filename in filename_list:
 	with open(f'processed_files_{series_name}.txt', 'a') as processed_files:
 		processed_files.write(f'{filename}\n')
 	i+=1
-	if i > 100:
+	if i > 200:
 		break
