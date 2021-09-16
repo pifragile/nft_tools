@@ -48,15 +48,15 @@ def list_nft(name, filename, description, collection_link):
 
 	time.sleep(0.5)
 
-	if not wait_for_image(os.path.join('images', 'collection.png'), num_tries=2):
+	if not wait_for_image(os.path.join('images', 'finder.png'), num_tries=2):
 		# click again
 		time.sleep(0.5)
 		pyautogui.click(637, 587)
 
-	wait_for_image(os.path.join('images', 'collection.png'))
+	wait_for_image(os.path.join('images', 'finder.png'))
 
 	# search field
-	pyautogui.click(1292, 115)
+	pyautogui.click(1093, 119)
 
 	time.sleep(0.5)
 
@@ -67,15 +67,15 @@ def list_nft(name, filename, description, collection_link):
 
 	time.sleep(0.5)
 	# not macOS
-	pyautogui.click(522, 156)
+	pyautogui.click(825, 156)
 
 	time.sleep(1)
 	#chose image
-	pyautogui.click(362, 206)
+	pyautogui.click(691, 205)
 
 	time.sleep(0.5)
 	# open
-	pyautogui.click(1515, 608)
+	pyautogui.click(1178, 316)
 
 	print('selected file')
 	wait_for_image(os.path.join('images', 'change.png'))
@@ -190,6 +190,10 @@ def nft_name_fun_hca(filename):
 	nft_number = filename.split('.')[0]
 	return f'Hashed Chaos #{nft_number}'
 
+def nft_name_fun_cwa(filename):
+	nft_number = filename.split('.')[0]
+	return f'Crypto Warriors #{nft_number}'
+
 filename_list = os.listdir('/Users/pigu/Dropbox/DATA/Documents/projekte/nft/drue/vier/collection')
 series_name = 'csc'
 nft_name_fun = nft_name_fun_csc
@@ -213,8 +217,18 @@ Generative Art by pifragile."""
 nft_name_fun = nft_name_fun_hca
 collection_link = 'https://opensea.io/collection/hashed-chaos'
 
+filename_list = [f'{i:04d}.gif' for i in range(9, 163)]
+series_name = 'cwa'
+description = 'Generative Art by pifragile.'
+nft_name_fun = nft_name_fun_cwa
+collection_link = 'https://opensea.io/collection/crypto-warriors-by-pifragile'
+
 
 i = 0
+nft_file_path = os.path.join('nft_data', f'nfts_{series_name}.csv')
+if not os.path.exists(nft_file_path):
+	os.system(f'touch {nft_file_path}')
+
 # change window
 pyautogui.click(1594, 239)
 for filename in filename_list:
@@ -222,8 +236,8 @@ for filename in filename_list:
 	if not filename.split('.')[-1] == 'gif':
 		continue
 
-	with open(f'processed_files_{series_name}.txt', 'r') as processed_files:
-		if filename in processed_files.read().splitlines():
+	with open(nft_file_path, 'r') as nft_file:
+		if filename in [line.split(',')[0].rstrip() for line in nft_file.read().splitlines()]:
 			print(f'Skipping file {filename}')
 			continue
 
@@ -231,11 +245,8 @@ for filename in filename_list:
 
 	nft_url = list_nft(name, filename, description, collection_link)
 
-	with open(os.path.join('nft_data', f'nfts_{series_name}.csv'), 'a') as nft_file:
+	with open(nft_file_path, 'a') as nft_file:
 		nft_file.write(f'{filename},{name},{nft_url}\n')
-
-	with open(f'processed_files_{series_name}.txt', 'a') as processed_files:
-		processed_files.write(f'{filename}\n')
 	i+=1
 	if i > 200:
 		break
