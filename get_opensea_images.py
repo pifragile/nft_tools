@@ -23,18 +23,24 @@ with open(latest_offset_file, 'r') as f:
     except Exception:
         i = 0
 
-res = None
 while i < 10000000:
     try:
         res = requests.get(f'https://api.opensea.io/api/v1/assets?order_direction=desc&offset={i}&limit=50')
     except Exception as e:
         print(e)
-        if res:
-            print(res.text)
-            print(res.status_code)
+        continue
+
+    if not res.ok:
+        print(res.text)
+        print(res.status_code)
         time.sleep(10)
         continue
-    for nft in res.json()['assets']:
+
+    data = res.json()
+    if 'assets' not in data:
+        print(data)
+
+    for nft in data['assets']:
         try:
             if 'image_url' in nft.keys() and nft['image_url']:
                 if 'num_sales' in nft.keys() and int(nft['num_sales']) > 0:
