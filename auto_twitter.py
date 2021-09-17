@@ -215,7 +215,7 @@ if not os.path.exists('community_interactions.txt'):
     os.system('touch community_interactions.txt')
 while True:
     if interact:
-        num_interactions = random.randint(4, 12)
+        num_interactions = random.randint(3, 13)
         for _ in range(num_interactions):
             try:
                 last_interaction_id = interact_with_community(last_interaction_id)
@@ -223,6 +223,6 @@ while True:
             except Exception as e:
                 print(e)
     else:
-        time.sleep(random.randint(int(0.75 * 3600), 3 * 3600))
+        time.sleep(random.randint(int(0.5 * 3600), int(2.75 * 3600)))
     post_random_nft()
     time.sleep(60 * 15)
