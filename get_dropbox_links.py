@@ -8,6 +8,9 @@ dirname = os.path.abspath(sys.argv[1])
 dropbox_path = dirname.split('Dropbox')[1]
 outfile = os.path.join('nft_data', f'dropbox_links_{sys.argv[2]}.csv')
 
+if not os.path.exists(outfile):
+	os.system(f'touch {outfile}')
+
 dbx = dropbox.Dropbox(os.getenv('dropbox_key'))
 
 for filename in os.listdir(dirname):

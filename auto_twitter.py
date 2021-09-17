@@ -65,6 +65,18 @@ Check it out on @opensea:
 
 #NFT #NFTCommunity #opensea #nftcollector #nftart'''
 
+
+def get_post_text_cwp(name, opensea_link):
+	return f'''{name}
+0.01 ETH, minted on Polygon, NO FEES🥳
+
+Masses of warriors fighting, and only YOUR warrior survives💕
+
+Check it out on @opensea:
+{opensea_link}
+
+#NFT #NFTCommunity #opensea #nftcollector #nftart'''
+
 def post_nft(series_name):
 	shared_nfts_file = f'shared_nfts_{series_name}.txt'
 	if not os.path.exists(shared_nfts_file):
@@ -103,7 +115,7 @@ def post_nft(series_name):
 		f.write(f'{filename}\n')
 
 
-series_names = ['cfd', 'csc', 'hca', 'cwa', 'cwa']
+series_names = ['cfd', 'csc', 'hca', 'cwp', 'cwp']
 
 while True:
 	try:

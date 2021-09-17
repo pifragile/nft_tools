@@ -27,7 +27,7 @@ def paste_text(text):
 	pyautogui.press('v')
 	pyautogui.keyUp('command')
 
-def list_nft(name, filename, description, collection_link):
+def list_nft(name, filename, description, collection_link, poly=False):
 	print(f'adding file {filename}')
 	wait_for_image(os.path.join('images', 'add.png'))
 	time.sleep(0.05)
@@ -95,6 +95,9 @@ def list_nft(name, filename, description, collection_link):
 	paste_text(description)
 	time.sleep(0.2)
 
+	#move out of the description box to avoid scrolling in the box
+	pyautogui.moveTo(1409, 405)
+
 	pyautogui.scroll(-17)
 	time.sleep(0.05)
 
@@ -105,6 +108,11 @@ def list_nft(name, filename, description, collection_link):
 
 	wait_for_image(os.path.join('images', 'woot.png'))
 	print('ADDED')
+
+	#copy url
+	if poly:
+		pyautogui.click(928, 708)
+		url = pyperclip.paste()
 	#close popup
 	pyautogui.click(1078, 263)
 	time.sleep(0.05)
@@ -115,17 +123,33 @@ def list_nft(name, filename, description, collection_link):
 	time.sleep(0.05)
 	print('sell..')
 
-	# price
-	wait_for_image(os.path.join('images', 'amount.png'))
-	pyautogui.click(923, 529)
-	time.sleep(0.5)
-	paste_text('0.01')
+	if poly:
+		wait_for_image(os.path.join('images', 'sell_poly.png'))
+		pyautogui.click(761, 473)
+		time.sleep(0.5)
+		paste_text('0.01')
+		time.sleep(0.3)
 
-	time.sleep(0.3)
+		# post listing
+		pyautogui.click(840, 926)
+		time.sleep(0.05)
+	else:
+		# price
+		wait_for_image(os.path.join('images', 'amount.png'))
+		pyautogui.click(923, 529)
+		time.sleep(0.5)
+		paste_text('0.01')
 
-	# post listing
-	pyautogui.click(1199, 568)
-	time.sleep(0.05)
+		time.sleep(0.3)
+
+		# post listing
+		pyautogui.click(1199, 568)
+		time.sleep(0.05)
+
+	if poly:
+		wait_for_image(os.path.join('images', 'sign_poly.png'))
+		pyautogui.click(612, 526)
+		time.sleep(0.5)
 
 	#sign
 	wait_for_image(os.path.join('images', 'signature.png'), num_tries=6)
@@ -136,10 +160,18 @@ def list_nft(name, filename, description, collection_link):
 
 	time.sleep(1)
 	# handle when wallet crashes
-	if wait_for_image(os.path.join('images', 'amount.png'), num_tries=1):
+	sell_image = 'sell_poly.png' if poly else 'amount.png'
+	if wait_for_image(os.path.join('images', sell_image), num_tries=1):
 		# post listing
-		pyautogui.click(1163,613)
+		# coordinates of shifted post button
+		coordinates = (840, 971) if poly else (1163,613)
+		pyautogui.click(coordinates)
 		time.sleep(0.05)
+
+		if poly:
+			wait_for_image(os.path.join('images', 'sign_poly.png'))
+			pyautogui.click(612, 526)
+			time.sleep(0.5)
 
 		#sign
 		print('sign..')
@@ -149,15 +181,18 @@ def list_nft(name, filename, description, collection_link):
 		
 	#view
 	print('LISTED')
-	wait_for_image(os.path.join('images', 'listed.png'))
-	print('copy url and return...')
+	if not poly:
+		wait_for_image(os.path.join('images', 'listed.png'))
+		print('copy url and return...')
 
 
-	# copy url to clipboard
-	pyautogui.click(696, 641)
+		# copy url to clipboard
+		pyautogui.click(696, 641)
 
-	time.sleep(.5)
-	url = pyperclip.paste()
+		time.sleep(.5)
+		url = pyperclip.paste()
+	else:
+		time.sleep(1)
 
 	if not url.startswith('https'):
 		raise Exception('BAD URL.')
@@ -194,6 +229,11 @@ def nft_name_fun_cwa(filename):
 	nft_number = filename.split('.')[0]
 	return f'Crypto Warriors #{nft_number}'
 
+def nft_name_fun_cwp(filename):
+	nft_number = filename.split('.')[0]
+	return f'Crypto Warrior #{nft_number}'
+
+poly=False
 filename_list = os.listdir('/Users/pigu/Dropbox/DATA/Documents/projekte/nft/drue/vier/collection')
 series_name = 'csc'
 nft_name_fun = nft_name_fun_csc
@@ -224,6 +264,18 @@ nft_name_fun = nft_name_fun_cwa
 collection_link = 'https://opensea.io/collection/crypto-warriors-by-pifragile'
 
 
+filename_list = [f'{i:04d}.gif' for i in range(1, 11)]
+series_name = 'cwp'
+description = '''Masses of warriors fighting and only your warrior survives💕
+
+Generative Art by pifragile.
+
+Minted on Polygon! No fees!'''
+nft_name_fun = nft_name_fun_cwp
+collection_link = 'https://opensea.io/collection/crypto-warriors-x-polygon'
+poly=True
+
+
 i = 0
 nft_file_path = os.path.join('nft_data', f'nfts_{series_name}.csv')
 if not os.path.exists(nft_file_path):
@@ -243,7 +295,7 @@ for filename in filename_list:
 
 	name = nft_name_fun(filename)
 
-	nft_url = list_nft(name, filename, description, collection_link)
+	nft_url = list_nft(name, filename, description, collection_link, poly=poly)
 
 	with open(nft_file_path, 'a') as nft_file:
 		nft_file.write(f'{filename},{name},{nft_url}\n')
