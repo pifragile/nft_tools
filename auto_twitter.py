@@ -193,7 +193,7 @@ def interact_with_community(last_interaction_id=None):
             print(f'processed status {status_id}')
             update_community_interactions(user_id)
             last_interaction_id = user_id
-            time.sleep(3)
+            time.sleep(5)
 
     return last_interaction_id
 
