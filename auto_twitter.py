@@ -68,14 +68,14 @@ Check it out on @opensea:
 
 def get_post_text_cwp(name, opensea_link):
 	return f'''{name}
-0.01 ETH, minted on Polygon, NO FEES🥳
+0.01 ETH, minted on @0xPolygon, NO FEES🥳
 
 Masses of warriors fighting, and only YOUR warrior survives💕
 
 Check it out on @opensea:
 {opensea_link}
 
-#NFT #NFTCommunity #opensea #nftcollector #nftart'''
+#NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
 
 def post_nft(series_name):
 	shared_nfts_file = f'shared_nfts_{series_name}.txt'
