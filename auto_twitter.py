@@ -190,7 +190,11 @@ def interact_with_community(last_interaction_id=None):
                 continue
             # like with 33% probability
             if not random.randint(0, 3):
-                api.CreateFavorite(status_id=status_id)
+                try:
+                    api.CreateFavorite(status_id=status_id)
+                except twitter.error.TwitterError as e:
+                    continue
+
             print(f'processed status {status_id}')
             update_community_interactions(user_id)
             last_interaction_id = status_id
