@@ -193,7 +193,7 @@ def interact_with_community(last_interaction_id=None):
                 api.CreateFavorite(status_id=status_id)
             print(f'processed status {status_id}')
             update_community_interactions(user_id)
-            last_interaction_id = user_id
+            last_interaction_id = status_id
             time.sleep(5)
             num_interactions += 1
 
