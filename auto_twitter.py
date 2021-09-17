@@ -5,8 +5,8 @@ import random
 from dotenv import load_dotenv
 import time
 
-# sleep 1 hour to avoid too many tweets in case of failures
-time.sleep(3600)
+# sleep 0.5 hour to avoid too many tweets in case of failures
+time.sleep(1800)
 
 load_dotenv()
 
