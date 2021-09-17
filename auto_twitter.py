@@ -161,6 +161,7 @@ def update_community_interactions(user_id):
 
 def interact_with_community(last_interaction_id=None):
     statuses = api.GetHomeTimeline(since_id=last_interaction_id, exclude_replies=True)
+    num_interactions = 0
     last_interaction_id = None
 
     for status in statuses:
@@ -194,6 +195,10 @@ def interact_with_community(last_interaction_id=None):
             update_community_interactions(user_id)
             last_interaction_id = user_id
             time.sleep(5)
+            num_interactions += 1
+
+            if num_interactions > 4:
+                break
 
     return last_interaction_id
 
