@@ -49,4 +49,4 @@ while i < 10000000:
     i += 50
     with open(latest_offset_file, 'w') as f:
         f.write(f'{i}\n')
-    time.sleep(2)
+    time.sleep(1)
