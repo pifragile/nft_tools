@@ -208,11 +208,12 @@ def interact_with_community(last_interaction_id=None):
 
 
 def post_random_nft():
-    series_names = ['cfd', 'csc', 'hca', 'cwp', 'cwp']
+    series_names = ['cfd', 'csc', 'hca', 'cwp']
     num_tries = 0
     while num_tries < 3:
         try:
             post_nft(random.choice(series_names))
+            break
         except Exception as e:
             print(e)
             time.sleep(10)
