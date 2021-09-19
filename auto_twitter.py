@@ -116,6 +116,9 @@ def post_nft(series_name):
 
     filename, name, opensea_link = available_nfts[0]
 
+    with open(shared_nfts_file, 'a') as f:
+        f.write(f'{filename}\n')
+
     with open(os.path.join('nft_data', f'dropbox_links_{series_name}.csv')) as csv_file:
         reader = csv.reader(csv_file, delimiter=',')
         rows = list(reader)
@@ -128,8 +131,6 @@ def post_nft(series_name):
     media_category = 'tweet_gif' if filename.split('.')[1] == 'gif' else None
     api.PostUpdate(status, media=dropbox_link, media_category=media_category)
 
-    with open(shared_nfts_file, 'a') as f:
-        f.write(f'{filename}\n')
 
 
 def validate_hashtags(hashtags):
