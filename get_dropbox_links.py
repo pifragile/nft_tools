@@ -1,12 +1,23 @@
+import argparse
+
 import dropbox, os
 from dotenv import load_dotenv
 import sys
 
 load_dotenv()
 
-dirname = os.path.abspath(sys.argv[1])
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('source', type=str, help='image path')
+parser.add_argument('collectionidentifier', type=str, help='output path path')
+parser.add_argument('fileextension', type=str, help='file extension')
+
+args = parser.parse_args()
+
+
+
+dirname = os.path.abspath(args.source)
 dropbox_path = dirname.split('Dropbox')[1]
-outfile = os.path.join('nft_data', f'dropbox_links_{sys.argv[2]}.csv')
+outfile = os.path.join('nft_data', f'dropbox_links_{args.collectionidentifier}.csv')
 
 if not os.path.exists(outfile):
 	os.system(f'touch {outfile}')
@@ -14,7 +25,7 @@ if not os.path.exists(outfile):
 dbx = dropbox.Dropbox(os.getenv('dropbox_key'))
 
 for filename in os.listdir(dirname):
-	if not filename or not filename.split('.')[-1] == 'gif':
+	if not filename or not filename.split('.')[-1] == args.fileextension:
 		continue
 
 	with open(outfile, 'r') as f:
