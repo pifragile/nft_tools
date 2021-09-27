@@ -150,7 +150,7 @@ def list_nft(name, filename, description, collection_link, poly=False):
 
     if poly:
         wait_for_image(os.path.join('images', 'sign_poly.png'))
-        pyautogui.click(612, 526)
+        pyautogui.click(590, 526)
         time.sleep(0.5)
 
     # sign
@@ -172,7 +172,7 @@ def list_nft(name, filename, description, collection_link, poly=False):
 
         if poly:
             wait_for_image(os.path.join('images', 'sign_poly.png'))
-            pyautogui.click(612, 526)
+            pyautogui.click(590, 526)
             time.sleep(0.5)
 
         # sign
@@ -274,7 +274,7 @@ description = 'Generative Art by pifragile.'
 nft_name_fun = nft_name_fun_cwa
 collection_link = 'https://opensea.io/collection/crypto-warriors-by-pifragile'
 
-filename_list = [f'{i:04d}.gif' for i in range(11, 100)]
+filename_list = [f'{i:04d}.gif' for i in range(21, 31)]
 series_name = 'cwp'
 description = '''Masses of warriors fighting and only your warrior survives💕
 
@@ -286,14 +286,14 @@ collection_link = 'https://opensea.io/collection/crypto-warriors-x-polygon'
 poly = True
 
 
-filename_list = [f'{i:04d}.png' for i in range(21, 100)]
-series_name = 'csu'
-description = '''Generative Art by pifragile.
-
-Minted on Polygon! No fees!'''
-nft_name_fun = nft_name_fun_csu
-collection_link = 'https://opensea.io/collection/cosmic-sun-1'
-poly = True
+# filename_list = [f'{i:04d}.png' for i in range(21, 100)]
+# series_name = 'csu'
+# description = '''Generative Art by pifragile.
+#
+# Minted on Polygon! No fees!'''
+# nft_name_fun = nft_name_fun_csu
+# collection_link = 'https://opensea.io/collection/cosmic-sun-1'
+# poly = True
 
 i = 0
 nft_file_path = os.path.join('nft_data', f'nfts_{series_name}.csv')
