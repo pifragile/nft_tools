@@ -95,6 +95,15 @@ Check it out on @opensea:
 #NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
 
 
+def get_post_text_cfd(name, opensea_link):
+    return f'''{name}
+0.01 ETH, now available on @0xPolygon, NO FEES🥳
+
+Check it out on @opensea:
+{opensea_link}
+
+#NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
+
 def post_nft(series_name):
     shared_nfts_file = f'shared_nfts_{series_name}.txt'
     if not os.path.exists(shared_nfts_file):
@@ -222,7 +231,7 @@ def interact_with_community(last_interaction_id=None):
 
 
 def post_random_nft():
-    series_names = ['cfd', 'csc', 'hca', 'cwp', 'csu']
+    series_names = ['cfd', 'cfd', 'csc', 'hca', 'cwp', 'csu']
     num_tries = 0
     while num_tries < 3:
         try:
