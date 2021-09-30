@@ -47,6 +47,7 @@ if args.featured:
         image_choice = random.sample(images, 6)
 
         for idx, img in enumerate(image_choice):
+            img = img.convert('RGBA')
             x = (idx % 3) * 400
             y = (idx // 3) * 400
             img = img.resize((400, 400))
