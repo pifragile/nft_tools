@@ -11,6 +11,8 @@ interact = len(sys.argv) > 1 and sys.argv[1] == 'interact'
 
 load_dotenv()
 
+my_followers = []
+
 # Consumer keys and access tokens, used for OAuth
 consumer_key = os.getenv('consumer_key')
 consumer_secret = os.getenv('consumer_secret')
@@ -171,6 +173,7 @@ def validate_text(text):
 
 
 def validate_user(user_id):
+    global my_followers
     # do not retweet own tweets
     if user_id == '1370329500442054657':
         return False
@@ -183,7 +186,11 @@ def validate_user(user_id):
         if count > 10:
             print(f'User id: {id}, count: {count}')
             return False
-        return True
+
+    if int(user_id) in my_followers:
+        print('Do not retweet for followers')
+        return False
+    return True
 
 
 def update_community_interactions(user_id):
@@ -257,6 +264,11 @@ if not os.path.exists('community_interactions.txt'):
     os.system('touch community_interactions.txt')
 while True:
     if interact:
+        try:
+            my_followers = [u.id for u in api.GetFollowers(1370329500442054657)]
+        except Exception:
+            pass
+
         num_interactions = random.randint(3, 13)
         for _ in range(num_interactions):
             try:
