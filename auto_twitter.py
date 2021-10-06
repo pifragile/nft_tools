@@ -3,8 +3,10 @@ import os
 import random
 import sys
 import time
+from PIL import Image
 
 import twitter
+import urllib
 from dotenv import load_dotenv
 
 interact = len(sys.argv) > 1 and sys.argv[1] == 'interact'
@@ -149,7 +151,18 @@ def post_nft(series_name):
     status = globals().get(f'get_post_text_{series_name}', get_post_text_generic)(name, opensea_link)
 
     media_category = 'tweet_gif' if filename.split('.')[1] == 'gif' else None
-    api.PostUpdate(status, media=dropbox_link, media_category=media_category)
+    if series_name == 'kin':
+        urllib.request.urlretrieve(
+            dropbox_link,
+            "img.png")
+
+        img = Image.open("img.png")
+        img = img.resize((1600,1600))
+        img.save('img.png')
+        media = open('img.png', 'rb')
+    else:
+        media = dropbox_link
+    api.PostUpdate(status, media=media, media_category=media_category)
 
 
 
