@@ -58,13 +58,13 @@ if args.featured:
 if args.banner:
     # banner 1400 x 400
     for i in range(num_images):
-        header = Image.new('RGBA', (1400, 400))
-        image_choice = random.sample(images, 14 * 4)
+        header = Image.new('RGBA', (2500, 500))
+        image_choice = random.sample(images, 5)
 
         for idx, img in enumerate(image_choice):
-            x = (idx % 14) * 100
-            y = (idx // 14) * 100
-            img = img.resize((100, 100))
-            header.paste(img, (x, y), img)
+            img = img.convert('RGBA')
+            x = idx * 500
+            img = img.resize((500, 500))
+            header.paste(img, (x, 0), img)
 
         header.save(os.path.join(output_path, f'banner_{i}.png'))
