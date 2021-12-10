@@ -3,10 +3,11 @@ import os
 import random
 import sys
 import time
-from PIL import Image
-
-import twitter
 import urllib
+
+import requests
+import twitter
+from PIL import Image
 from dotenv import load_dotenv
 
 interact = len(sys.argv) > 1 and sys.argv[1] == 'interact'
@@ -117,12 +118,12 @@ Check it out on @opensea:
 
 #generativeArt #NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
 
-def post_nft(series_name):
+
+def get_nft_data(series_name):
     shared_nfts_file = f'shared_nfts_{series_name}.txt'
     if not os.path.exists(shared_nfts_file):
         os.system(f'touch {shared_nfts_file}')
 
-    shared_nfts = []
     with open(shared_nfts_file, 'r') as f:
         shared_nfts = [l.rstrip() for l in f.readlines()]
 
@@ -137,33 +138,52 @@ def post_nft(series_name):
         os.system(f'rm {shared_nfts_file}')
 
     filename, name, opensea_link = available_nfts[0]
-
     with open(shared_nfts_file, 'a') as f:
         f.write(f'{filename}\n')
+    return filename, name, opensea_link
 
-    with open(os.path.join('nft_data', f'dropbox_links_{series_name}.csv')) as csv_file:
-        reader = csv.reader(csv_file, delimiter=',')
-        rows = list(reader)
 
-        # second element of first row
-        dropbox_link = [row for row in rows if row[0] == filename][0][1]
-
-    status = globals().get(f'get_post_text_{series_name}', get_post_text_generic)(name, opensea_link)
-
-    media_category = 'tweet_gif' if filename.split('.')[1] == 'gif' else None
+def get_twitter_media(series_name, dropbox_link):
     if series_name == 'kin':
         urllib.request.urlretrieve(
             dropbox_link,
             "img.png")
 
         img = Image.open("img.png")
-        img = img.resize((1600,1600))
+        img = img.resize((1600, 1600))
         img.save('img.png')
         media = open('img.png', 'rb')
     else:
         media = dropbox_link
-    api.PostUpdate(status, media=media, media_category=media_category)
+    return media
 
+
+def get_dropbox_link(series_name, filename):
+    with open(os.path.join('nft_data', f'dropbox_links_{series_name}.csv')) as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        rows = list(reader)
+
+        # second element of first row
+        dropbox_link = [row for row in rows if row[0] == filename][0][1]
+        return dropbox_link
+
+
+def get_status_text(series_name, nft_name, opensea_link=None):
+    status_text_fn = globals().get(f'get_post_text_{series_name}', get_post_text_generic)
+    return status_text_fn(nft_name, opensea_link)
+
+
+def post_nft(series_name):
+    filename, name, opensea_link = get_nft_data(series_name)
+
+    dropbox_link = get_dropbox_link(series_name, filename)
+    status = get_status_text(series_name, name, opensea_link)
+
+    media_category = 'tweet_gif' if filename.split('.')[1] == 'gif' else None
+
+    media = get_twitter_media(series_name, dropbox_link)
+
+    api.PostUpdate(status, media=media, media_category=media_category)
 
 
 def validate_hashtags(hashtags):
@@ -259,17 +279,65 @@ def interact_with_community(last_interaction_id=None):
     return last_interaction_id
 
 
-def post_random_nft():
-    series_names = ['kin', 'kin', 'kin', 'cfd', 'csc', 'hca', 'cwp', 'csu']
+def try_and_sleep(fn, args):
     num_tries = 0
     while num_tries < 3:
         try:
-            post_nft(random.choice(series_names))
+            fn(*args)
             break
         except Exception as e:
             print(e)
             time.sleep(10)
             num_tries += 1
+
+
+def post_random_nft():
+    series_names = ['kin', 'kin', 'kin', 'cfd', 'csc', 'hca', 'cwp', 'csu']
+    try_and_sleep(post_nft, [random.choice(series_names)])
+
+
+def get_file_extension(link):
+    return link.split('?')[0].split('.')[-1]
+
+
+def get_nft(collection):
+    shared_nfts_file = f'shared_nfts_{collection["identifier"]}.txt'
+    if not os.path.exists(shared_nfts_file):
+        os.system(f'touch {shared_nfts_file}')
+
+    with open(shared_nfts_file, 'r') as f:
+        shared_nfts = [l.rstrip() for l in f.readlines()]
+
+    print(shared_nfts)
+    available_nfts = [nft for nft in collection['nft_set'] if not str(nft['id']) in shared_nfts]
+
+    if available_nfts == []:
+        available_nfts = collection['nft_set']
+        os.system(f'rm {shared_nfts_file}')
+
+    nft = available_nfts[0]
+    with open(shared_nfts_file, 'a') as f:
+        f.write(f'{nft["id"]}\n')
+
+    return nft
+
+
+def post_nft_2():
+    nft_data = requests.get('https://space.pifragile.com/pifragile/get-nfts').json()
+    collection = random.choice(nft_data)
+    nft = get_nft(collection)
+    status = collection['twitter_text']
+    status = status.format(**{'collection': collection, 'nft': nft})
+    media = nft['media']
+    file_extension = get_file_extension(media)
+
+    media_category = 'tweet_gif' if file_extension == 'gif' else None
+
+    api.PostUpdate(status, media=media, media_category=media_category)
+
+
+def post_random_nft_2():
+    try_and_sleep(post_nft_2, [])
 
 
 last_interaction_id = None
@@ -291,5 +359,8 @@ while True:
                 print(e)
     else:
         time.sleep(random.randint(int(0.5 * 3600), int(2.75 * 3600)))
-    post_random_nft()
+    if random.random() < 0.2:
+        post_random_nft_2()
+    else:
+        post_random_nft()
     time.sleep(60 * 15)
