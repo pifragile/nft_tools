@@ -308,7 +308,6 @@ def get_nft(collection):
     with open(shared_nfts_file, 'r') as f:
         shared_nfts = [l.rstrip() for l in f.readlines()]
 
-    print(shared_nfts)
     available_nfts = [nft for nft in collection['nft_set'] if not str(nft['id']) in shared_nfts]
 
     if available_nfts == []:
@@ -324,15 +323,25 @@ def get_nft(collection):
 
 def post_nft_2():
     nft_data = requests.get('https://space.pifragile.com/pifragile/get-nfts').json()
-    collection = random.choice(nft_data)
+    priorities = [collection['priority'] for collection in nft_data]
+    collection = random.choices(nft_data, weights=priorities, k=1)[0]
     nft = get_nft(collection)
     status = collection['twitter_text']
     status = status.format(**{'collection': collection, 'nft': nft})
     media = nft['media']
     file_extension = get_file_extension(media)
 
-    media_category = 'tweet_gif' if file_extension == 'gif' else None
-
+    media_category =  None
+    if file_extension == 'gif':
+        media_category = 'tweet_gif'
+    elif file_extension in ['mp4']:
+        media_category = 'tweet_video'
+        urllib.request.urlretrieve(
+            media,
+            "vid.mp4")
+        media = open('vid.mp4', 'rb')
+        media = api.UploadMediaChunked(media, media_category=media_category)
+        time.sleep(60)
     api.PostUpdate(status, media=media, media_category=media_category)
 
 
