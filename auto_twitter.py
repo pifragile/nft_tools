@@ -354,6 +354,7 @@ if not os.path.exists('community_interactions.txt'):
     os.system('touch community_interactions.txt')
 while True:
     if interact:
+        time.sleep(60 * 15)
         try:
             my_followers = [u.id for u in api.GetFollowers(1370329500442054657)]
         except Exception:
@@ -367,9 +368,8 @@ while True:
             except Exception as e:
                 print(e)
     else:
-        time.sleep(random.randint(int(0.5 * 3600), int(2.75 * 3600)))
-    if random.random() < 0.7:
+        time.sleep(random.randint(int(0.5 * 3600), int(1.3 * 3600)))
+    if random.random() < 0.8:
         post_random_nft_2()
     else:
         post_random_nft()
-    time.sleep(60 * 15)
