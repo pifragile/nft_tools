@@ -369,7 +369,7 @@ while True:
                 print(e)
     else:
         time.sleep(random.randint(int(0.5 * 3600), int(1.3 * 3600)))
-    if random.random() < 0.8:
+    if random.random() < 0.9:
         post_random_nft_2()
     else:
         post_random_nft()
