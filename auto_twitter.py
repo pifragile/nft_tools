@@ -30,162 +30,6 @@ api = twitter.Api(consumer_key=consumer_key,
                   tweet_mode='extended')
 
 
-def get_post_text_csc(name, opensea_link):
-    return f'''{name}
-Generative Art by pifragile.
-
-Each piece features a sample of the official source code of Ethereum.
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart'''
-
-
-def get_post_text_generic(name, opensea_link):
-    return f'''{name}
-Generative Art by pifragile.
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart'''
-
-
-def get_post_text_hca(name, opensea_link):
-    return f'''{name}
-Generative Art by pifragile.
-
-1 NFT = 5 color patterns with proof of uniqueness
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart'''
-
-
-def get_post_text_cwa(name, opensea_link):
-    return f'''{name}
-Generative Art by pifragile.
-
-Masses of warriors fighting, and only YOUR warrior survives💕
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart'''
-
-
-def get_post_text_cwp(name, opensea_link):
-    return f'''{name}
-0.01 ETH, minted on @0xPolygon, NO FEES🥳
-
-Masses of warriors fighting, and only YOUR warrior survives💕
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
-
-
-def get_post_text_csu(name, opensea_link):
-    return f'''{name}
-0.01 ETH, minted on @0xPolygon, NO FEES🥳
-
-Generative Art by pifragile.
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
-
-
-def get_post_text_cfd(name, opensea_link):
-    return f'''{name}
-0.01 ETH, now available on @0xPolygon, NO FEES🥳
-
-Check it out on @opensea:
-{opensea_link}
-
-#NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
-
-
-def get_post_text_kin(name, opensea_link):
-    return f'''{name}
-
-Check it out on @opensea:
-{opensea_link}
-
-#generativeArt #NFT #NFTCommunity #opensea #nftcollector #nftart #Polygon'''
-
-
-def get_nft_data(series_name):
-    shared_nfts_file = f'shared_nfts_{series_name}.txt'
-    if not os.path.exists(shared_nfts_file):
-        os.system(f'touch {shared_nfts_file}')
-
-    with open(shared_nfts_file, 'r') as f:
-        shared_nfts = [l.rstrip() for l in f.readlines()]
-
-    with open(os.path.join('nft_data', f'nfts_{series_name}.csv')) as csv_file:
-        reader = csv.reader(csv_file, delimiter=',')
-        rows = list(reader)
-
-    available_nfts = [row for row in rows if row[0] not in shared_nfts]
-
-    if available_nfts == []:
-        available_nfts = rows
-        os.system(f'rm {shared_nfts_file}')
-
-    filename, name, opensea_link = available_nfts[0]
-    with open(shared_nfts_file, 'a') as f:
-        f.write(f'{filename}\n')
-    return filename, name, opensea_link
-
-
-def get_twitter_media(series_name, dropbox_link):
-    if series_name == 'kin':
-        urllib.request.urlretrieve(
-            dropbox_link,
-            "img.png")
-
-        img = Image.open("img.png")
-        img = img.resize((1600, 1600))
-        img.save('img.png')
-        media = open('img.png', 'rb')
-    else:
-        media = dropbox_link
-    return media
-
-
-def get_dropbox_link(series_name, filename):
-    with open(os.path.join('nft_data', f'dropbox_links_{series_name}.csv')) as csv_file:
-        reader = csv.reader(csv_file, delimiter=',')
-        rows = list(reader)
-
-        # second element of first row
-        dropbox_link = [row for row in rows if row[0] == filename][0][1]
-        return dropbox_link
-
-
-def get_status_text(series_name, nft_name, opensea_link=None):
-    status_text_fn = globals().get(f'get_post_text_{series_name}', get_post_text_generic)
-    return status_text_fn(nft_name, opensea_link)
-
-
-def post_nft(series_name):
-    filename, name, opensea_link = get_nft_data(series_name)
-
-    dropbox_link = get_dropbox_link(series_name, filename)
-    status = get_status_text(series_name, name, opensea_link)
-
-    media_category = 'tweet_gif' if filename.split('.')[1] == 'gif' else None
-
-    media = get_twitter_media(series_name, dropbox_link)
-
-    api.PostUpdate(status, media=media, media_category=media_category)
-
-
 def validate_hashtags(hashtags):
     accepted_hashtags = ['nftartist', 'nftartists', 'nft', 'nftcollector', 'nftart', 'nftcommunity']
     for hashtag in hashtags:
@@ -291,11 +135,6 @@ def try_and_sleep(fn, args):
             num_tries += 1
 
 
-def post_random_nft():
-    series_names = ['kin', 'kin', 'kin', 'cfd', 'csc', 'hca', 'cwp', 'csu']
-    try_and_sleep(post_nft, [random.choice(series_names)])
-
-
 def get_file_extension(link):
     return link.split('?')[0].split('.')[-1]
 
@@ -369,7 +208,6 @@ while True:
                 print(e)
     else:
         time.sleep(random.randint(int(0.5 * 3600), int(2.75 * 3600)))
-    if random.random() < 0.9:
-        post_random_nft_2()
-    else:
-        post_random_nft()
+
+    post_random_nft_2()
+
