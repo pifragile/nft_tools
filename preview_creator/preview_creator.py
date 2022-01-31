@@ -55,8 +55,10 @@ base_url = f'file://{html_path}/preview.html?num=16'
 
 
 def download():
-    driver = webdriver.Chrome('./chromedriver-2', chrome_options=opt)
+    driver = webdriver.Chrome('./chromedriver-2', options=opt)
     driver.get(base_url)
+    time.sleep(10)
+    
 
 
 def download_images():
@@ -71,11 +73,6 @@ def download_images():
 
     for p in processes:
         p.join()
-    
-    while True: 
-        if len(get_tmp_file_names()) == num_processes * 16:
-            break
-    time.sleep(5)
 
 
 def create_pdf():
