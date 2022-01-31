@@ -36,6 +36,7 @@ prefs = {'download.default_directory': tmp_path,
          'profile.default_content_setting_values.automatic_downloads': 1
          }
 opt.add_experimental_option('prefs', prefs)
+opt.add_argument("--headless")
 
 
 def get_tmp_file_names():
@@ -51,20 +52,19 @@ def get_downloaded_file_name():
         return None
 
 
-base_url = f'file://{html_path}/preview.html?num=16'
+base_url = f'file://{html_path}/preview.html?num=8'
 
 
 def download():
     driver = webdriver.Chrome('./chromedriver-2', options=opt)
     driver.get(base_url)
-    time.sleep(10)
-    
+    time.sleep(5)
+    driver.close()
 
 
 def download_images():
-    reset_images()
     reset_tmp()
-    num_processes = num_images // 16
+    num_processes = num_images // 8
     processes = []
     for i in range(num_processes):
         p = mp.Process(target=download)
@@ -94,9 +94,8 @@ def create_pdf():
             pdf.image(os.path.join(tmp_path, image), x, y, actual_size, actual_size)
 
     pdf.output(f"preview_{round(time.time())}.pdf", "F")
-    os.system('pkill -f Chrome')
-
 
 
 download_images()
 create_pdf()
+reset_tmp()
