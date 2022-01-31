@@ -7,12 +7,10 @@ from fpdf import FPDF
 from selenium import webdriver
 
 parser = argparse.ArgumentParser(description='Compress NFTs')
-parser.add_argument('html_path', type=str, help='html path')
 parser.add_argument('num_images', type=int, help='number of images')
 
 args = parser.parse_args()
 
-html_path = os.path.abspath(args.html_path)
 num_images = args.num_images
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -52,11 +50,11 @@ def get_downloaded_file_name():
         return None
 
 
-base_url = f'file://{html_path}/preview.html?num=8'
+base_url = f'file://{os.path.abspath(os.path.curdir)}/preview.html?num=8'
 
 
 def download():
-    driver = webdriver.Chrome('./chromedriver-2', options=opt)
+    driver = webdriver.Chrome(os.path.join(os.path.expanduser('~'), 'chromedriver', 'chromedriver-2'), options=opt)
     driver.get(base_url)
     time.sleep(5)
     driver.close()
