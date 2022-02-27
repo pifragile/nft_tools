@@ -10,6 +10,8 @@ import twitter
 from PIL import Image
 from dotenv import load_dotenv
 
+base_url = 'https://space.pifragile.com/pifragile'
+
 interact = len(sys.argv) > 1 and sys.argv[1] == 'interact'
 
 load_dotenv()
@@ -161,7 +163,7 @@ def get_nft(collection):
 
 
 def post_nft_2():
-    nft_data = requests.get('https://space.pifragile.com/pifragile/get-nfts').json()
+    nft_data = requests.get(f'{base_url}/get-nfts').json()
     priorities = [collection['priority'] for collection in nft_data]
     collection = random.choices(nft_data, weights=priorities, k=1)[0]
     nft = get_nft(collection)
@@ -207,8 +209,9 @@ while True:
             except Exception as e:
                 print(e)
     else:
-        time.sleep(random.randint(int(0.5 * 3600), int(2.75 * 3600)))
-        #time.sleep(random.randint(int(0.5 * 3600), int(1.5 * 3600)))
+        data = requests.get(f'{base_url}/get-config').json()
+        min_hrs = data['twitter_interval_min_hours']
+        max_hrs = data['twitter_interval_max_hours']
+        time.sleep(random.randint(int(min_hrs * 3600), int(max_hrs * 3600)))
 
     post_random_nft_2()
-
